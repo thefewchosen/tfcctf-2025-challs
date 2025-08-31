@@ -1,0 +1,152 @@
+html{
+    height: 100%;
+    background: radial-gradient(circle at top left, #0a166e, #460761);
+}
+body{
+    height: 100%;
+    background: radial-gradient(circle at top left, #0a166e, #460761);
+    background-image: url("/static/img/web.svg");
+    background-repeat: repeat;
+    background-size:max(20vw,30vh) auto;
+    background-position: center;
+}
+
+.berkshire-swash-bold {
+  font-family: "Berkshire Swash", serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.berkshire-swash-normal {
+  font-family: "Berkshire Swash", serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+
+#web-container{
+    overflow:hidden;
+    width:100%;
+    height: 100%;
+    position: relative;
+    font-size: clamp(10px, max(3vw, 3vh), 2000px);
+}
+
+#web2{
+    width:max(80vw,80vh);
+    height: auto;
+    top:0;
+    left:0;
+    transform: translate(-30%,-40%);
+    position: absolute;
+    z-index: -2;
+}
+
+#web3{
+    width:max(80vw,80vh);
+    height: auto;
+    bottom:0;
+    right:0;
+    transform: translate(30%,40%);
+    position: absolute;
+    z-index: -2;
+}
+
+.content{
+    width:100%;
+    text-align: center;
+    height: fit-content;
+    padding:0.6em;
+    padding-bottom:0.2em;
+    font-size: 2em;
+    border-radius: 10px;
+    left:20px;
+    color:white;
+    background-color: rgba(255, 255, 255, 0.932);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.846);
+
+}
+
+.page-title{
+    font-size: 1em;
+    color:black;
+    text-shadow: 1px 1px 10px rgb(131, 17, 218);
+}
+
+#url-search{
+    font-size: 0.2em;
+    width: 70%;
+    color:rgb(0, 0, 0);
+    filter: grayscale(1);
+}
+
+#username{
+    font-size: 0.2em;
+    color:rgb(0, 0, 0);
+    filter: grayscale(1);
+}
+
+#password{
+    font-size: 0.2em;
+    color:rgb(0, 0, 0);
+    filter: grayscale(1);
+}
+
+#token{
+    font-size: 0.2em;
+    color:rgb(0, 0, 0);
+    filter: grayscale(1);
+}
+
+#uuid{
+    font-size: 0.2em;
+    color:rgb(0, 0, 0);
+    filter: grayscale(1);
+}
+
+#search-btn{
+    font-size: 0.2em;
+    color:black;
+    filter: grayscale(1);
+}
+
+.spider-part{
+    background-image: url("/static/img/web2.svg");
+    background-size: contain;
+}
+
+@keyframes sus-jos {
+    0%   {top:0;}
+    70%  {top:50%;}
+    100% {top:0;}
+}
+
+.spidey{
+    position:absolute;
+    top:0;
+    width:20%;
+    height: auto;
+    animation-name: sus-jos;
+    animation-duration: 7s;
+    animation-iteration-count:infinite;
+}
+
+#spidey-2{
+    animation-delay: 1s;
+}
+
+.disclaimer{
+    color:rgb(163, 76, 76);
+
+}
+
+
+.modal-header  {
+    background: #1a2769;
+    background: radial-gradient(circle,rgba(26, 39, 105, 1) 0%, rgba(52, 43, 105, 1) 31%, rgba(128, 33, 176, 1) 100%);
+    color:white;
+}
+
+.blockquote{
+    font-size: 0.2em;
+}

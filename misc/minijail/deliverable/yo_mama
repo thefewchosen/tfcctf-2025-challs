@@ -1,0 +1,18 @@
+#!/bin/bash
+
+goog='^[$>_=:!(){}]+$'
+
+while true; do
+    echo -n "caca$ "
+    stty -echo
+    read -r mine
+    stty echo
+    echo
+
+    if [[ $mine =~ $goog ]]; then
+        eval "$mine"
+    else
+        echo '[!] Error: forbidden characters detected'
+        printf '\n'
+    fi
+done

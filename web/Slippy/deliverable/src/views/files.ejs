@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your Files</title>
+  <%- include('styles') %>
+</head>
+<body>
+  <div class="container">
+    <h2>Your Uploaded Files</h2>
+
+    <% if (files.length === 0) { %>
+      <p>No files uploaded yet.</p>
+    <% } else { %>
+      <ul class="list-group">
+        <% files.forEach(file => { %>
+          <li class="list-group-item">
+            <%= file %>
+            <a href="/files/<%= file %>" class="button">Download</a>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+
+    <a href="/upload" class="button">Upload More</a>
+    <a href="/" class="button">Home</a>
+  </div>
+</body>
+</html>

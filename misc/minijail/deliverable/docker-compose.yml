@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  minijail:
+    build: .
+    ports:
+      - "4444:4444"        
+    stdin_open: true
+    tty: true

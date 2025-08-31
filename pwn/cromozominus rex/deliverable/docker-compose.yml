@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  mucusuki:
+    build: .
+    ports:
+      - "1337:1337"
+    restart: unless-stopped
+    # Uncomment if you're on a multi-arch host and need to force x86_64
+    # platform: linux/amd64

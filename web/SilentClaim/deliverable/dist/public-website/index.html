@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SilentClaim</title>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.3/cdn.min.js"></script>
+    <!-- Use the same working CDN as the reference file -->
+    <script src="https://unpkg.com/amazon-cognito-identity-js@6.3.1/dist/amazon-cognito-identity.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+            font-family: inherit;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .secondary-btn {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+            margin-top: 15px;
+        }
+
+        .secondary-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+
+
+        .user-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .user-email {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            padding: 16px 24px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            max-width: 400px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: auto;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 50%, #c92a2a 100%);
+            color: white;
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #51cf66 0%, #40c057 50%, #2b8a3e 100%);
+            color: white;
+        }
+
+        .toast.info {
+            background: linear-gradient(135deg, #74c0fc 0%, #4dabf7 50%, #1971c2 100%);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" x-data="notesApp()" x-init="init()">
+        <!-- Login View -->
+        <div x-show="view === 'login'" x-transition>
+            <h2>Login</h2>
+            <form @submit.prevent="login()">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" x-model="loginData.email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" x-model="loginData.password" required>
+                </div>
+                <button type="submit" :disabled="loading">
+                    <span x-show="!loading">Login</span>
+                    <span x-show="loading" class="loading"></span>
+                </button>
+            </form>
+            <button class="secondary-btn" @click="view = 'register'">Create Account</button>
+        </div>
+
+        <!-- Register View -->
+        <div x-show="view === 'register'" x-transition>
+            <h2>Create Account</h2>
+            <form @submit.prevent="register()">
+                <div class="form-group">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" x-model="registerData.email" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" x-model="registerData.password" required
+                        placeholder="Min 8 chars, uppercase, lowercase, number">
+                </div>
+                <button type="submit" :disabled="loading">
+                    <span x-show="!loading">Register</span>
+                    <span x-show="loading" class="loading"></span>
+                </button>
+            </form>
+            <button class="secondary-btn" @click="view = 'login'">Back to Login</button>
+        </div>
+
+        <!-- Verify View -->
+        <div x-show="view === 'verify'" x-transition>
+            <h2>Verify Email</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: #666;">
+                A verification code has been sent to <strong x-text="registerData.email"></strong>
+            </p>
+            <form @submit.prevent="verify()">
+                <div class="form-group">
+                    <label for="verify-code">Verification Code</label>
+                    <input type="text" id="verify-code" x-model="verifyCode" required placeholder="Enter 6-digit code">
+                </div>
+                <button type="submit" :disabled="loading">
+                    <span x-show="!loading">Verify</span>
+                    <span x-show="loading" class="loading"></span>
+                </button>
+            </form>
+            <button class="secondary-btn" @click="resendCode()">Resend Code</button>
+        </div>
+
+        <!-- Notes View -->
+        <div x-show="view === 'notes'" x-transition>
+            <h2>Your Claim</h2>
+            <div class="user-info">
+                Logged in as <span class="user-email" x-text="userEmail"></span>
+            </div>
+            <form @submit.prevent="saveNote()">
+                <div class="form-group">
+                    <label for="note-content">Claim</label>
+                    <textarea id="note-content" x-model="noteContent" placeholder="Write your note here..."></textarea>
+                </div>
+                <button type="submit" :disabled="loading || saving">
+                    <span x-show="!saving">Save Claim</span>
+                    <span x-show="saving" class="loading"></span>
+                </button>
+            </form>
+            <button class="secondary-btn" @click="logout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <script>
+
+
+        // Global toast notification system
+        window.showToast = function (message, type = 'info', duration = 4000) {
+            const toastContainer = document.querySelector('.toast-container');
+            if (!toastContainer) return;
+
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            toast.textContent = message;
+
+            // Add to container
+            toastContainer.appendChild(toast);
+
+            // Trigger animation
+            setTimeout(() => toast.classList.add('show'), 10);
+
+            // Auto-remove after duration
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, duration);
+        };
+
+        // Convenience functions
+        window.showError = (message, duration) => showToast(message, 'error', duration);
+        window.showSuccess = (message, duration) => showToast(message, 'success', duration);
+        window.showInfo = (message, duration) => showToast(message, 'info', duration);
+
+        const CONFIG = {
+            UserPoolId: '${user_pool_id}',
+            ClientId: '${app_client_id}',
+            Region: '${aws_region}',
+            ApiBaseUrl: '${api_base_url}'
+        };
+
+        function notesApp() {
+            return {
+                view: 'login',
+                loading: false,
+                saving: false,
+                userEmail: '',
+                noteContent: '',
+                accessToken: null,
+                userId: null,
+
+                loginData: {
+                    email: '',
+                    password: ''
+                },
+
+                registerData: {
+                    email: '',
+                    password: ''
+                },
+
+                verifyCode: '',
+
+                poolData: {
+                    UserPoolId: CONFIG.UserPoolId,
+                    ClientId: CONFIG.ClientId
+                },
+
+                init() {
+                    console.log('Initializing app...');
+                    console.log('AmazonCognitoIdentity available:', typeof AmazonCognitoIdentity !== 'undefined');
+
+                    // Check if user is already logged in
+                    const token = localStorage.getItem('accessToken');
+                    const email = localStorage.getItem('userEmail');
+                    const userId = localStorage.getItem('userId');
+
+                    if (token && email && userId) {
+                        this.accessToken = token;
+                        this.userEmail = email;
+                        this.userId = userId;
+                        this.view = 'notes';
+                        this.fetchNote();
+                    }
+                },
+
+                async login() {
+                    this.loading = true;
+
+                    try {
+                        const userPool = new AmazonCognitoIdentity.CognitoUserPool(this.poolData);
+                        const authDetails = new AmazonCognitoIdentity.AuthenticationDetails({
+                            Username: this.loginData.email,
+                            Password: this.loginData.password,
+                            ClientMetadata: {
+                                role: 'writer'
+                            }
+                        });
+
+                        const cognitoUser = new AmazonCognitoIdentity.CognitoUser({
+                            Username: this.loginData.email,
+                            Pool: userPool
+                        });
+
+                        cognitoUser.authenticateUser(authDetails, {
+                            onSuccess: async (result) => {
+                                this.accessToken = result.getAccessToken().getJwtToken();
+                                const idToken = result.getIdToken();
+                                this.userId = idToken.payload.sub;
+                                this.userEmail = this.loginData.email;
+
+                                // Store in localStorage
+                                localStorage.setItem('accessToken', this.accessToken);
+                                localStorage.setItem('userEmail', this.userEmail);
+                                localStorage.setItem('userId', this.userId);
+
+                                this.view = 'notes';
+                                this.loginData = { email: '', password: '' };
+                                this.loading = false;
+
+                                // Show success toast
+                                showSuccess('Login successful!');
+
+                                // Fetch existing note
+                                await this.fetchNote();
+                            },
+                            onFailure: (err) => {
+                                showError(err.message || 'Login failed');
+                                this.loading = false;
+                            }
+                        });
+                    } catch (err) {
+                        showError(err.message || 'Login failed');
+                        this.loading = false;
+                    }
+                },
+
+                async register() {
+                    this.loading = true;
+
+                    try {
+                        const userPool = new AmazonCognitoIdentity.CognitoUserPool(this.poolData);
+
+                        userPool.signUp(
+                            this.registerData.email,
+                            this.registerData.password,
+                            [],
+                            [{
+                                Name: 'role',
+                                Value: 'writer'
+                            }],
+                            (err, result) => {
+                                if (err) {
+                                    showError(err.message || 'Registration failed');
+                                    this.loading = false;
+                                    return;
+                                }
+
+                                this.view = 'verify';
+                                this.loading = false;
+                            },
+                            {
+                                role: 'writer'
+                            }
+                        );
+                    } catch (err) {
+                        showError(err.message || 'Registration failed');
+                        this.loading = false;
+                    }
+                },
+
+                async verify() {
+                    this.loading = true;
+
+                    try {
+                        const userPool = new AmazonCognitoIdentity.CognitoUserPool(this.poolData);
+                        const cognitoUser = new AmazonCognitoIdentity.CognitoUser({
+                            Username: this.registerData.email,
+                            Pool: userPool
+                        });
+
+                        cognitoUser.confirmRegistration(this.verifyCode, true, (err, result) => {
+                            if (err) {
+                                showError(err.message || 'Verification failed');
+                                this.loading = false;
+                                return;
+                            }
+
+                            showSuccess('Account verified! Please login.');
+                            this.loading = false;
+
+                            setTimeout(() => {
+                                this.view = 'login';
+                                this.registerData = { email: '', password: '' };
+                                this.verifyCode = '';
+                            }, 2000);
+                        });
+                    } catch (err) {
+                        showError(err.message || 'Verification failed');
+                        this.loading = false;
+                    }
+                },
+
+                async resendCode() {
+                    this.loading = true;
+
+                    try {
+                        const userPool = new AmazonCognitoIdentity.CognitoUserPool(this.poolData);
+                        const cognitoUser = new AmazonCognitoIdentity.CognitoUser({
+                            Username: this.registerData.email,
+                            Pool: userPool
+                        });
+
+                        cognitoUser.resendConfirmationCode((err, result) => {
+                            if (err) {
+                                showError(err.message || 'Failed to resend code');
+                                this.loading = false;
+                                return;
+                            }
+
+                            showSuccess('Verification code resent!');
+                            this.loading = false;
+                        });
+                    } catch (err) {
+                        showError(err.message || 'Failed to resend code');
+                        this.loading = false;
+                    }
+                },
+
+                async fetchNote() {
+                    this.loading = true;
+
+                    try {
+                        const response = await fetch(CONFIG.ApiBaseUrl + '/notes/' + this.userId + '/', {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': 'Bearer ' + this.accessToken,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.noteContent = data.content || '';
+                        } else if (response.status === 404) {
+                            // No note exists yet
+                            this.noteContent = '';
+                        } else {
+                            const text = await response.text();
+                            if (!text.includes('Note not found')) {
+                                showError('Failed to fetch note');
+                            }
+                        }
+                    } catch (err) {
+                        console.error('Fetch error:', err);
+                        // Don't show error for initial fetch
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async saveNote() {
+                    this.saving = true;
+
+                    try {
+                        const response = await fetch(CONFIG.ApiBaseUrl + '/notes/' + this.userId + '/', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + this.accessToken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                content: this.noteContent
+                            })
+                        });
+
+                        if (response.ok) {
+                            showSuccess('Claim saved successfully!');
+                        } else {
+                            showError('Failed to save claim');
+                        }
+                    } catch (err) {
+                        showError('Failed to save claim');
+                    } finally {
+                        this.saving = false;
+                    }
+                },
+
+                logout() {
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('userEmail');
+                    localStorage.removeItem('userId');
+
+                    this.accessToken = null;
+                    this.userEmail = '';
+                    this.userId = null;
+                    this.noteContent = '';
+                    this.view = 'login';
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #34c9eb, #4caf50, #f9a825);
+      background-size: 600% 600%;
+      animation: bgAnimation 12s ease infinite;
+      color: #fff;
+      text-align: center;
+    }
+
+    @keyframes bgAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-top: 30px;
+      text-shadow: 2px 2px #000;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    form {
+      margin: 30px auto;
+      padding: 25px;
+      max-width: 400px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 20px;
+      box-shadow: 0 0 20px #000;
+    }
+
+    input {
+      width: 90%;
+      padding: 12px;
+      margin: 12px 0;
+      border-radius: 10px;
+      border: none;
+      font-size: 1.1em;
+    }
+
+    button {
+      padding: 12px 25px;
+      background: #ff5722;
+      color: #fff;
+      border: none;
+      border-radius: 15px;
+      font-size: 1.3em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    button:hover {
+      background: #00bcd4;
+      transform: scale(1.1);
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 15px;
+      color: #ffcc00;
+      font-weight: bold;
+      text-decoration: none;
+      padding: 8px 15px;
+      border-radius: 12px;
+      background: #673ab7;
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+
+    a:hover {
+      transform: scale(1.2) rotate(5deg);
+      background: #ff4081;
+    }
+
+    /* Platypus sparkle footer */
+    body::after {
+      content: "🦆🦫✨ Login like a Platypus! ✨🦫🦆";
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.2em;
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0%, 100% { opacity: 1; color: #ff0; }
+      50% { opacity: 0.5; color: #0ff; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Login 🦫</h1>
+  <form method="post">
+    <input type="text" name="username" placeholder="Username" required><br>
+    <input type="password" name="password" placeholder="Password" required><br>
+    <button type="submit">Login</button>
+  </form>
+  <a href="{{ url_for('register') }}">Register</a>
+</body>
+</html>

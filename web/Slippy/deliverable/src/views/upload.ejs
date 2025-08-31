@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Zip</title>
+  <%- include('styles') %>
+</head>
+<body>
+  <div class="container">
+    <h2>Upload a Zip File</h2>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+      <input type="file" name="zipfile" accept=".zip" required class="button" />
+      <br />
+      <button type="submit" class="button">Upload</button>
+      <a href="/" class="button">Back</a>
+    </form>
+  </div>
+</body>
+</html>

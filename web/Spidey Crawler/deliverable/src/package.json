@@ -1,0 +1,21 @@
+{
+  "name": "spidey-crawler",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sagi, Cheepsss",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "selenium-webdriver": "4.35.0",
+    "sqlite3": "^5.1.7",
+    "uuid": "^11.1.0",
+    "ejs":"^3.1.10",
+    "jsdom":"^26.1.0",
+    "dompurify":"^3.2.6"
+  }
+}

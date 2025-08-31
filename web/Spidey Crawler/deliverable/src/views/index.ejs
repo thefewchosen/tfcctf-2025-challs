@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
+
+
+    <title>Spidey Crawler</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&display=swap" rel="stylesheet">
+
+
+</head>
+<style>
+
+</style>
+<body>
+    <div class="background"> </div>
+    <div class="container-fluid" id="web-container">
+        <img id="web2" src="/static/img/web2.svg">
+        <img id="web3" src="/static/img/web2.svg">
+        <div class="row h-100">
+            <div class="col-3 d-none d-md-flex justify-content-center spider-part">
+                <img src="/static/img/spider.svg" class="spidey">
+            </div>
+            <div class="col justify-content-center align-items-center d-flex">
+                <div class="content">
+                    <h1 class="page-title berkshire-swash-bold"> SpideyCrawler</h1>
+                    <form class="form-inline d-flex justify-content-center" method="post" action="/crawl">
+                        <input class="form-control mr-sm-2 berkshire-swash-normal" id="url-search" type="url" name="url" placeholder="http://example.com" aria-label="Search">
+                        <button class="btn btn-outline-success my-2 my-sm-0 berkshire-swash-normal" type="submit" id="search-btn">Crawl🕷</button>
+                    </form>
+                    <blockquote class="blockquote disclaimer mb-1 mt-3" >
+                        <p>Disclaimer: This challenge is designed to be hacked. Any indication of proper usage or untapped activity will result in legal sanctions.<br>
+                        Happy hacking!</p>
+                    </blockquote>
+                </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="staticBackdropModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header justify-content-center">
+                                <h3 class="modal-title berkshire-swash-normal" id="staticBackdropLabel">Notification</h3>
+                            </div>
+                            <div class="modal-body text-center" style="font-size: 0.5em;">
+                                <% if (created) { %>
+                                    URL sent for crawling!
+                                <% } else if (error) { %>
+                                    <%= error %>
+                                <% } %>      
+                            </div>
+                            <div class="modal-footer justify-content-center">
+                                <button type="button" class="btn btn-dark berkshire-swash-normal" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal -->
+
+            </div>
+            <div class="col-3 d-none d-md-flex justify-content-center spider-part">
+                <img src="/static/img/spider.svg" class="spidey" id="spidey-2">
+            </div>
+        </div>
+    </div>
+
+    <% if (created || error) { %>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var myModal = new bootstrap.Modal(document.getElementById('staticBackdropModal'));
+                myModal.show();
+            });
+        </script>
+    <% } %>
+    
+</body>
+</html>
