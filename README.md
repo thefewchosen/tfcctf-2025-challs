@@ -49,8 +49,3 @@ Challenge|Author|Difficulty|Solves
 [webless](<./web/webless>)|Hiumee|GRANDPA|21
 [Spidey Crawler](<./web/Spidey Crawler>)|Sagi|GRANDPA|1
 [SilentClaim](<./web/SilentClaim>)|Mtib|GRANDPA|1
-## Feedback
-
-Challenge|Author|Difficulty|Solves
--|-|-|-
-[FEEDBACK](<./feedback/FEEDBACK>)|THE FEW CHOSEN|BABY|0
