@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+  next-ssh:
+    build: .
+    container_name: next-ssh
+    ports:
+    - "3000:3000"
+    - "2222:22"
+    restart: unless-stopped
