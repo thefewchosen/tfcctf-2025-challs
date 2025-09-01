@@ -1,4 +1,4 @@
-# TFC CTF 2024 Challenges
+# TFC CTF 2025 Challenges
 
 ## Crypto
 
